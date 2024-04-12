@@ -105,27 +105,30 @@ app.get("/user/:userName", (req, res) => {
   
 
 
-  app.put("/user/update-marks", (req, res) => {
-    const { username, testMarks } = req.body;
-  
-    // Find the user by username and update the testMarks array
-    userModel.findOneAndUpdate(
-      { userName: username },
-      { $push: { testMarks: testMarks } },
-      { new: true } // Return the updated document
-    )
-      .then(updatedUser => {
-        if (updatedUser) {
-          res.json({ message: "Test marks updated successfully", user: updatedUser });
-        } else {
-          res.status(404).json({ message: "User not found" });
-        }
-      })
-      .catch(err => {
-        console.error("Error updating test marks:", err);
-        res.status(500).json({ error: "Internal server error" });
-      });
-  });
+app.put("/user/update-test-marks", async (req, res) => {
+  const { username, testMarks } = req.body;
+
+  try {
+    // Find the user by username
+    const user = await UserModel.findOne({ userName: username });
+
+    if (user) {
+      // Add the testMarks to the array
+      user.testMarks.push(testMarks);
+      
+      // Save the updated user document
+      await user.save();
+
+      res.status(200).json({ message: "Test marks added successfully" });
+    } else {
+      res.status(404).json({ message: "User not found" });
+    }
+  } catch (error) {
+    console.error("Error updating test marks:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
   
   
   app.put("/user/update-voice-test-marks", async (req, res) => {
