@@ -34,10 +34,16 @@ app.post("/login",(req,res)=>{
 })
 
 app.post('/register',(req,res)=>{
-  userModel.create(req.body)
-  .then(users=>res.json(users))
-  .catch(err=>res.json(err))
-})
+  const newUser = req.body;
+  newUser.testMarks = null; // Set testMarks to null
+  newUser.voiceTestMarks = null; // Set voiceTestMarks to null
+  newUser.feedback = null; // Set feedback to null
+
+  userModel.create(newUser)
+    .then(user => res.json(user))
+    .catch(err => res.json(err));
+});
+
 
 app.get("/user/:userName", (req, res) => {
   const userName = req.params.userName;
@@ -75,7 +81,72 @@ app.get("/user/:userName", (req, res) => {
   });
   
 
+  app.put("/user/update-feedback", (req, res) => {
+    const { username, feedback } = req.body;
+  
+    // Find the user by username and update the feedback
+    userModel.findOneAndUpdate(
+      { userName: username },
+      { feedback: feedback },
+      { new: true } // Return the updated document
+    )
+      .then(updatedUser => {
+        if (updatedUser) {
+          res.json({ message: "Feedback updated successfully", user: updatedUser });
+        } else {
+          res.status(404).json({ message: "User not found" });
+        }
+      })
+      .catch(err => {
+        console.error("Error updating feedback:", err);
+        res.status(500).json({ error: "Internal server error" });
+      });
+  });
+  
 
+
+  app.put("/user/update-marks", (req, res) => {
+    const { username, testMarks } = req.body;
+  
+    // Find the user by username and update the testMarks array
+    userModel.findOneAndUpdate(
+      { userName: username },
+      { $push: { testMarks: testMarks } },
+      { new: true } // Return the updated document
+    )
+      .then(updatedUser => {
+        if (updatedUser) {
+          res.json({ message: "Test marks updated successfully", user: updatedUser });
+        } else {
+          res.status(404).json({ message: "User not found" });
+        }
+      })
+      .catch(err => {
+        console.error("Error updating test marks:", err);
+        res.status(500).json({ error: "Internal server error" });
+      });
+  });
+  
+  
+  app.put("/user/update-voice-test-marks", async (req, res) => {
+    const { username, voiceTestMark } = req.body;
+  
+    try {
+      const user = await userModel.findOne({ userName: username });
+  
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+  
+      user.voiceTestMarks.push(voiceTestMark);
+      await user.save();
+  
+      res.json({ message: "Voice test mark added successfully" });
+    } catch (error) {
+      console.error("Error updating voice test marks:", error);
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
   
   
   
