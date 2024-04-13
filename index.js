@@ -15,6 +15,7 @@ mongoose.connect("mongodb+srv://oscar:oscar%40546@cluster0.nbn0hpp.mongodb.net/l
   console.log("Connected to the database");
 });
 
+
 app.get("/users", async (req, res) => {
   try {
     // Fetch all users from the database
@@ -33,7 +34,6 @@ app.get("/users", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 
 app.post("/login",(req,res)=>{
   const{userName,password}=req.body;
