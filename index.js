@@ -157,29 +157,29 @@ app.get("/user/:userName", (req, res) => {
   
   
   
-  app.put("/user/update-voice-test-marks", async (req, res) => {
-    const { username, voiceTestMark } = req.body;
+   app.put("/user/update-voice-test-marks", async (req, res) => {
+    const { username, voiceTestMarks } = req.body;
   
     try {
       // Find the user by username
       const user = await userModel.findOne({ userName: username });
   
       if (user) {
-        // Ensure user.voiceTestMarks is initialized as an array
+        // Ensure user.testMarks is initialized as an array
         user.voiceTestMarks = user.voiceTestMarks || [];
         
-        // Add the voiceTestMark to the array
-        user.voiceTestMarks.push(voiceTestMark);
+        // Add the testMarks to the array
+        user.voiceTestMarks.push(voiceTestMarks);
         
         // Save the updated user document
         await user.save();
   
-        res.status(200).json({ message: "Voice test marks added successfully" });
+        res.status(200).json({ message: "Test marks added successfully" });
       } else {
         res.status(404).json({ message: "User not found" });
       }
     } catch (error) {
-      console.error("Error updating voice test marks:", error);
+      console.error("Error updating test marks:", error);
       res.status(500).json({ error: "Internal server error" });
     }
   });
