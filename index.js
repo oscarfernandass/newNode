@@ -15,6 +15,26 @@ mongoose.connect("mongodb+srv://oscar:oscar%40546@cluster0.nbn0hpp.mongodb.net/l
   console.log("Connected to the database");
 });
 
+app.get("/users", async (req, res) => {
+  try {
+    // Fetch all users from the database
+    const users = await userModel.find();
+
+    if (users.length > 0) {
+      // If users are found, return them as a response
+      res.status(200).json(users);
+    } else {
+      // If no users are found, return a 404 status with a message
+      res.status(404).json({ message: "No users found" });
+    }
+  } catch (error) {
+    // If there's an error, return a 500 status with an error message
+    console.error("Error fetching users:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
 app.post("/login",(req,res)=>{
   const{userName,password}=req.body;
   userModel.findOne({userName:userName})
