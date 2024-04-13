@@ -35,9 +35,9 @@ app.post("/login",(req,res)=>{
 
 app.post('/register',(req,res)=>{
   const newUser = req.body;
-  newUser.testMarks = null; // Set testMarks to null
-  newUser.voiceTestMarks = null; // Set voiceTestMarks to null
-  newUser.feedback = null; // Set feedback to null
+  newUser.testMarks = 0; // Set testMarks to null
+  newUser.voiceTestMarks = 0; // Set voiceTestMarks to null
+  newUser.feedback = "Empty feedback"; // Set feedback to null
 
   userModel.create(newUser)
     .then(user => res.json(user))
