@@ -33,11 +33,11 @@ app.post("/login",(req,res)=>{
   })
 })
 
-app.post('/register',(req,res)=>{
+app.post('/register', (req, res) => {
   const newUser = req.body;
-  newUser.testMarks = 0; // Set testMarks to null
-  newUser.voiceTestMarks = 0; // Set voiceTestMarks to null
-  newUser.feedback = "Empty feedback"; // Set feedback to null
+  newUser.testMarks = []; // Initialize testMarks as an empty array
+  newUser.voiceTestMarks = []; // Similarly initialize voiceTestMarks
+  newUser.feedback = "Empty feedback";
 
   userModel.create(newUser)
     .then(user => res.json(user))
@@ -105,46 +105,59 @@ app.get("/user/:userName", (req, res) => {
   
 
 
-app.put("/user/update-test-marks", async (req, res) => {
-  const { username, testMarks } = req.body;
-
-  try {
-    // Find the user by username
-    const user = await UserModel.findOne({ userName: username });
-
-    if (user) {
-      // Add the testMarks to the array
-      user.testMarks.push(testMarks);
-      
-      // Save the updated user document
-      await user.save();
-
-      res.status(200).json({ message: "Test marks added successfully" });
-    } else {
-      res.status(404).json({ message: "User not found" });
+  app.put("/user/update-test-marks", async (req, res) => {
+    const { username, testMarks } = req.body;
+  
+    try {
+      // Find the user by username
+      const user = await userModel.findOne({ userName: username });
+  
+      if (user) {
+        // Ensure user.testMarks is initialized as an array
+        user.testMarks = user.testMarks || [];
+        
+        // Add the testMarks to the array
+        user.testMarks.push(testMarks);
+        
+        // Save the updated user document
+        await user.save();
+  
+        res.status(200).json({ message: "Test marks added successfully" });
+      } else {
+        res.status(404).json({ message: "User not found" });
+      }
+    } catch (error) {
+      console.error("Error updating test marks:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
-  } catch (error) {
-    console.error("Error updating test marks:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-});
-
+  });
+  
+  
+  
+  
   
   
   app.put("/user/update-voice-test-marks", async (req, res) => {
     const { username, voiceTestMark } = req.body;
   
     try {
+      // Find the user by username
       const user = await userModel.findOne({ userName: username });
   
-      if (!user) {
-        return res.status(404).json({ message: "User not found" });
+      if (user) {
+        // Ensure user.voiceTestMarks is initialized as an array
+        user.voiceTestMarks = user.voiceTestMarks || [];
+        
+        // Add the voiceTestMark to the array
+        user.voiceTestMarks.push(voiceTestMark);
+        
+        // Save the updated user document
+        await user.save();
+  
+        res.status(200).json({ message: "Voice test marks added successfully" });
+      } else {
+        res.status(404).json({ message: "User not found" });
       }
-  
-      user.voiceTestMarks.push(voiceTestMark);
-      await user.save();
-  
-      res.json({ message: "Voice test mark added successfully" });
     } catch (error) {
       console.error("Error updating voice test marks:", error);
       res.status(500).json({ error: "Internal server error" });
