@@ -22,7 +22,7 @@ app.get("/users", async (req, res) => {
 
     if (users.length > 0) {
       // If users are found, return them as a response
-      res.status(200).json(users);
+      res.json(users);
     } else {
       // If no users are found, return a 404 status with a message
       res.status(404).json({ message: "No users found" });
