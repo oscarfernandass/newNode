@@ -6,7 +6,8 @@ const userSchema = new mongoose.Schema({
   email: String,
   testMarks: [Number], // Array of integers for test marks
   voiceTestMarks: [Number], // Array of integers for voice test marks
-  feedback: String // Feedback string
+  feedback: String, // Feedback string
+  notification: [String]
 });
 
 const userModel = mongoose.model("users", userSchema);
