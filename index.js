@@ -58,7 +58,6 @@ app.post('/register', (req, res) => {
   newUser.testMarks = []; // Initialize testMarks as an empty array
   newUser.voiceTestMarks = []; // Similarly initialize voiceTestMarks
   newUser.feedback = "Empty feedback";
-  newUser.notification=[];
 
   userModel.create(newUser)
     .then(user => res.json(user))
@@ -153,33 +152,7 @@ app.get("/user/:userName", (req, res) => {
     }
   });
 
-  app.put("/user/update-notification", async (req, res) => {
-    const { username, notification } = req.body;
-  
-    try {
-      // Find the user by username
-      const user = await userModel.findOne({ userName: username });
-  
-      if (user) {
-        // Ensure user.testMarks is initialized as an array
-        user.notification = user.notification || [];
-        
-        // Add the testMarks to the array
-        user.notification.push(notification);
-        
-        // Save the updated user document
-        await user.save();
-  
-        res.status(200).json({ message: "notification added successfully" });
-      } else {
-        res.status(404).json({ message: "User not found" });
-      }
-    } catch (error) {
-      console.error("Error updating test marks:", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  });
-  
+
   
   
   
